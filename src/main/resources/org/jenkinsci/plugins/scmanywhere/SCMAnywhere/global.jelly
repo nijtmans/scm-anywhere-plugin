@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:section title="SCM anywhere">
+    <f:entry title="SCM command line executable" field="scmExe" help="/plugin/tfs/tfExecutable.html">
+      <f:textbox />
+    </f:entry>
+  </f:section>
+</j:jelly>
