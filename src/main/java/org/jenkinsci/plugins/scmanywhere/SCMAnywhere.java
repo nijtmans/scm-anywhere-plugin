@@ -45,7 +45,7 @@ public class SCMAnywhere extends SCM implements Serializable {
      * Source repository URL from which we pull.
      */
     @CheckForNull
-    private String repositoryUrl;
+    private String server;
     @CheckForNull
     private String port;
     @CheckForNull
@@ -54,16 +54,19 @@ public class SCMAnywhere extends SCM implements Serializable {
     private String password;
     @CheckForNull
     private String teamproject;
+    @CheckForNull
+    private String folder;
     private static final Logger logger = Logger.getLogger(SCMAnywhere.class.getName());
     private static final long serialVersionUID = 1L;
 
     @DataBoundConstructor
-    public SCMAnywhere(String repositoryUrl, String port, String username, String password, String teamproject) {
+    public SCMAnywhere(String server, String port, String username, String password, String teamproject, String folder) {
         this.setPort(port);
         this.setUsername(username);
         this.setPassword(password);
         this.setTeamproject(teamproject);
-        this.setRepositoryUrl(repositoryUrl);
+        this.setFolder(folder);
+        this.setServer(server);
     }
 
     @DataBoundSetter
@@ -71,13 +74,18 @@ public class SCMAnywhere extends SCM implements Serializable {
         this.teamproject = Util.fixEmptyAndTrim(teamproject);
     }
 
+    @DataBoundSetter
+    public void setFolder(@CheckForNull final String folder) {
+        this.folder = Util.fixEmptyAndTrim(folder);
+    }
+
     /**
      * Set the IPAdress from where project need to be extracted.
      *
      */
     @DataBoundSetter
-    public void setRepositoryUrl(@CheckForNull final String repositoryUrl) {
-        this.repositoryUrl = Util.fixEmptyAndTrim(repositoryUrl);
+    public void setServer(@CheckForNull final String server) {
+        this.server = Util.fixEmptyAndTrim(server);
     }
 
     @DataBoundSetter
@@ -101,13 +109,18 @@ public class SCMAnywhere extends SCM implements Serializable {
      * @return
      */
     @Exported
-    public String getTeamProject() {
+    public String getTeamproject() {
         return this.teamproject;
     }
 
     @Exported
-    public String getRepositoryUrl() {
-        return this.repositoryUrl;
+    public String getFolder() {
+        return this.folder;
+    }
+
+    @Exported
+    public String getServer() {
+        return this.server;
     }
 
     @Exported
@@ -163,9 +176,9 @@ public class SCMAnywhere extends SCM implements Serializable {
         arg.add(getDescriptor().getScmExe());
         arg.add("GetFolderHistory");
 
-        if (this.repositoryUrl != "" || this.repositoryUrl != null) {
+        if (this.server != "" || this.server != null) {
             arg.add("-server");
-            arg.add(getRepositoryUrl());
+            arg.add(getServer());
         }
         if (this.port != "" || this.port != null) {
             arg.add("-port");
@@ -184,7 +197,12 @@ public class SCMAnywhere extends SCM implements Serializable {
 
         if (this.teamproject != "") {
             arg.add("-teamproject");
-            arg.add(getTeamProject());
+            arg.add(getTeamproject());
+        }
+
+        if (this.folder != "") {
+            arg.add("-folder");
+            arg.add(getFolder());
         }
 
         if (!proxyhostname.equals("") && proxyport != 0) {
@@ -196,8 +214,6 @@ public class SCMAnywhere extends SCM implements Serializable {
             arg.add(proxyport);
         }
 
-        arg.add("-folder");
-        arg.add("$/scm-anywhere");
         if (detail == "fileDetail") {
             arg.add("-v");
         }
@@ -212,9 +228,9 @@ public class SCMAnywhere extends SCM implements Serializable {
         arg.add(getDescriptor().getScmExe());
         arg.add("GetLatestFolder");
 
-        if (this.repositoryUrl != "" || this.repositoryUrl != null) {
+        if (this.server != "" || this.server != null) {
             arg.add("-server");
-            arg.add(getRepositoryUrl());
+            arg.add(getServer());
         }
         if (this.port != "" || this.port != null) {
             arg.add("-port");
@@ -233,7 +249,12 @@ public class SCMAnywhere extends SCM implements Serializable {
 
         if (this.teamproject != "" || this.teamproject != null) {
             arg.add("-teamproject");
-            arg.add(getTeamProject());
+            arg.add(getTeamproject());
+        }
+
+        if (this.folder != "" || this.folder != null) {
+            arg.add("-folder");
+            arg.add(getFolder());
         }
 
         String workDir = "";
@@ -295,9 +316,8 @@ public class SCMAnywhere extends SCM implements Serializable {
             return PollingResult.BUILD_NOW;
         }
 
-        ArgumentListBuilder arg = new ArgumentListBuilder();
         output.printf("\nGetting current remote revision...  Test with Jenkins\n");
-        arg = getChangeSet("fileDetail", proxyhostname, proxyport);
+        ArgumentListBuilder arg = getChangeSet("fileDetail", proxyhostname, proxyport);
 
         int highestChangeSetID = 0;
         String DateTime = "";

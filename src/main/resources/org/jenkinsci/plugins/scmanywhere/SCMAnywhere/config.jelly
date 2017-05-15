@@ -1,8 +1,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-  <f:entry title="${%IP address}" help="/plugin/scm/help-name.html">
-    <f:textbox field="repositoryUrl" />
+  <f:entry title="${%Server}" help="/plugin/scm/help-name.html">
+    <f:textbox field="server" />
   </f:entry>
 
   <f:entry title="${%Port}" help="/plugin/scm/help-name.html">
@@ -17,7 +17,11 @@
     <f:textbox field="password" />
   </f:entry>
 
-  <f:entry title="${%Team Project }" help="/plugin/scm/help-name.html">
+  <f:entry title="${%Team Project}" help="/plugin/scm/help-name.html">
     <f:textbox field="teamproject" />
+  </f:entry>
+
+  <f:entry title="${%Folder}" help="/plugin/scm/help-name.html">
+    <f:textbox field="folder" />
   </f:entry>
 </j:jelly>
