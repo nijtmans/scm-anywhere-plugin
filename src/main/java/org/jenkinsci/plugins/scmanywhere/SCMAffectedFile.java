@@ -42,4 +42,3 @@ public class SCMAffectedFile implements ChangeLogSet.AffectedFile {
         return this.fileId;
     }
 }
-

@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -26,7 +25,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 @SuppressWarnings("deprecation")
 public class PreSCMBuildStepsWrapper extends BuildWrapper {
     /**
-     * Stored build steps to run before the scm  checkout is called
+     * Stored build steps to run before the scm checkout is called
      */
     public final ArrayList<BuildStep> buildSteps;
 
@@ -51,17 +50,17 @@ public class PreSCMBuildStepsWrapper extends BuildWrapper {
      * @param listener
      * @return noop Environment class
      */
-     @Override
-     public Environment setUp(AbstractBuild build, Launcher launcher,
+    @Override
+    public Environment setUp(AbstractBuild build, Launcher launcher,
             BuildListener listener) throws IOException, InterruptedException {
-             return new NoopEnv();
-     }
+        return new NoopEnv();
+    }
 
     /**
      * Overridden precheckout step, this is where wedo all the work.
      *
-     * Checks to make sure we have some buildsteps set,
-     * and then calls the prebuild and perform on all of them.
+     * Checks to make sure we have some buildsteps set, and then calls the prebuild and perform on all of them.
+     *
      * @todo handle build steps failure in some sort of reasonable way
      *
      * @param build
@@ -69,12 +68,12 @@ public class PreSCMBuildStepsWrapper extends BuildWrapper {
      * @param listener
      */
     @Override
-    public void preCheckout(AbstractBuild build, Launcher launcher,BuildListener listener) throws IOException, InterruptedException {
+    public void preCheckout(AbstractBuild build, Launcher launcher, BuildListener listener)
+            throws IOException, InterruptedException {
         PrintStream log = listener.getLogger();
 
         /* touch workspace so that it is created on first time */
-        if( ! build.getWorkspace().exists())
-        {
+        if (!build.getWorkspace().exists()) {
             build.getWorkspace().mkdirs();
         }
 
@@ -84,7 +83,7 @@ public class PreSCMBuildStepsWrapper extends BuildWrapper {
         }
 
         log.println("Running Prebuild steps");
-        for (BuildStep bs : buildSteps)  {
+        for (BuildStep bs : buildSteps) {
             if (!bs.prebuild(build, listener)) {
                 log.println("Failed pre build for " + bs.toString());
                 if (failOnError) {
@@ -114,16 +113,16 @@ public class PreSCMBuildStepsWrapper extends BuildWrapper {
 
     @Extension
     public static final class DescriptorImpl extends Descriptor<BuildWrapper> {
-            /**
-             * This human readable name is used in the configuration screen.
-             */
-            public String getDisplayName() {
-                    // TODO localization
-                    return "Run buildstep before SCM runs";
-            }
+        /**
+         * This human readable name is used in the configuration screen.
+         */
+        public String getDisplayName() {
+            // TODO localization
+            return "Run buildstep before SCM runs";
+        }
 
     }
 
-     class NoopEnv extends Environment {
-     }
+    class NoopEnv extends Environment {
+    }
 }
