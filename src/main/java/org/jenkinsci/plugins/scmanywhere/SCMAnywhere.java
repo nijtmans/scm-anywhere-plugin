@@ -74,7 +74,7 @@ public class SCMAnywhere extends SCM implements Serializable {
 
 	/**
 	 * Set the IPAdress from where project need to be extracted.
-	 * 
+	 *
 	 */
 	@DataBoundSetter
 	public void setRepositoryUrl(@CheckForNull final String repositoryUrl) {
@@ -98,7 +98,7 @@ public class SCMAnywhere extends SCM implements Serializable {
 
 	/**
 	 * Gets the teamproject from where project need to be extracted.
-	 * 
+	 *
 	 * @return
 	 */
 	@Exported
@@ -135,7 +135,7 @@ public class SCMAnywhere extends SCM implements Serializable {
 
 		return rev;
 	}
-	
+
 	@Override
 	public SCMRevisionState calcRevisionsFromBuild(AbstractBuild<?, ?> build, Launcher launcher, TaskListener listener)
 			throws IOException, InterruptedException {
@@ -206,7 +206,7 @@ public class SCMAnywhere extends SCM implements Serializable {
 
 	@SuppressWarnings("deprecation")
 	private ArgumentListBuilder getLatestProject(FilePath workspace, String proxyhostname , int proxyport) throws IOException, InterruptedException {
-		
+
 		ArgumentListBuilder arg = new ArgumentListBuilder();
 		arg.add(getDescriptor().getScmExe());
 		arg.add("GetLatestFolder");
@@ -258,7 +258,7 @@ public class SCMAnywhere extends SCM implements Serializable {
 	public PollingResult compareRemoteRevisionWith(@Nonnull final Job<?, ?> job, @Nullable Launcher launcher,
 			@Nullable final FilePath workspace, @Nonnull final TaskListener listener,
 			@Nonnull final SCMRevisionState baseline) throws IOException, InterruptedException {
-		
+
 		PrintStream output = listener.getLogger();
 		final Jenkins jenkins = Jenkins.getInstance();
 		if (jenkins == null) {
@@ -270,14 +270,14 @@ public class SCMAnywhere extends SCM implements Serializable {
 
 		final Run<?, ?> lastRun = job.getLastBuild();
 		output.printf(lastRun.getTimestampString() + lastRun.getDisplayName() + "\n");
-		
+
 		/*Get the proxy details setting from the Jenkins manage configuration */
 		ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
 		String proxyhostname = "";
 		int proxyport = 0;
-		if (proxyConfig != null) {		
+		if (proxyConfig != null) {
 		    @SuppressWarnings("deprecation")
-			Proxy proxy = proxyConfig.createProxy();	
+			Proxy proxy = proxyConfig.createProxy();
 		    if (proxy != null && proxy.type() == Proxy.Type.HTTP) {
 		        InetSocketAddress address = (InetSocketAddress) proxy.address();
 		        // Success, now we can get the proxy hostname and port.
@@ -288,19 +288,19 @@ public class SCMAnywhere extends SCM implements Serializable {
 
 		 if(myBaseline == null) {
 			 // Probably the first build, or possibly an aborted build
-		  myBaseline = getLastState(lastRun); 
-		  if (myBaseline == null) 
+		  myBaseline = getLastState(lastRun);
+		  if (myBaseline == null)
 			  output.printf("\nNo Baseline \n");
 			  return PollingResult.BUILD_NOW;
-		  }		
+		  }
 
 		ArgumentListBuilder arg = new ArgumentListBuilder();
-		output.printf("\nGetting current remote revision...  Test with Jenkins\n");	
+		output.printf("\nGetting current remote revision...  Test with Jenkins\n");
 		arg = getChangeSet("fileDetail",proxyhostname ,proxyport);
 
 		int highestChangeSetID = 0;
-		String DateTime ="";		
-		try 
+		String DateTime ="";
+		try
 		{
 			ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
 			if (launcher.launch().cmds(arg).stdout(byteArray).join() != 0)
@@ -311,18 +311,18 @@ public class SCMAnywhere extends SCM implements Serializable {
 
 			String loggingData = byteArray.toString();
 			String[] splitLines = loggingData.split("\n");
-			
+
 			if(splitLines.length != 0)
 			{
 				highestChangeSetID = getChangeSetID(splitLines);
 				DateTime = getRevisionDateTime(splitLines);
-				listener.getLogger().printf("\nFirst change set : " + highestChangeSetID + " : "+  DateTime + "\n");	
-			}				
+				listener.getLogger().printf("\nFirst change set : " + highestChangeSetID + " : "+  DateTime + "\n");
+			}
 		} catch (IOException e) {
 			listener.error("Failed to run scm clean-tree\n");
 		}
-		
-		
+
+
 		final SCMAnyWhereRevisionState previousState = getLastState(lastRun);
 		listener.getLogger().printf("Previous State :"+ previousState.getRevNo() + " "+previousState.getRevDateTime());
 		listener.getLogger().printf("Current State :"+ highestChangeSetID + " "+DateTime);
@@ -330,7 +330,7 @@ public class SCMAnywhere extends SCM implements Serializable {
 		if(!String.valueOf(highestChangeSetID).equals(previousState.getRevNo()) && !String.valueOf(DateTime).equals(previousState.getRevDateTime()))
 		{
 			listener.getLogger().print("build now after comparing the revisions");
-			return PollingResult.BUILD_NOW;	
+			return PollingResult.BUILD_NOW;
 		}
 		return PollingResult.NO_CHANGES;
 	}
@@ -349,7 +349,7 @@ public class SCMAnywhere extends SCM implements Serializable {
 		}
 		return changeSetID;
 	}
-	
+
 	/* find the latest checkout date and time from the logging */
 	private String getRevisionDateTime(String[] splitLines){
 		String dateTime = "";
@@ -364,17 +364,17 @@ public class SCMAnywhere extends SCM implements Serializable {
 		}
 		return dateTime;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
-	public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener, 
+	public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener,
 						 File changelogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
 		listener.getLogger().println("Checkout method Starting ..");
 
 		if (launcher == null) {
             launcher = new LocalLauncher(listener);
         }
-		
+
 		FilePath repoDir;
 		repoDir = workspace;
 
@@ -386,8 +386,8 @@ public class SCMAnywhere extends SCM implements Serializable {
 		String proxyhostname = "";
 		int proxyport = 0;
 		ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
-		if (proxyConfig != null) {		
-		    Proxy proxy = proxyConfig.createProxy();	
+		if (proxyConfig != null) {
+		    Proxy proxy = proxyConfig.createProxy();
 		    if (proxy != null && proxy.type() == Proxy.Type.HTTP) {
 		        InetSocketAddress address = (InetSocketAddress) proxy.address();
 		        // Success, now we can get the proxy hostname and port.
@@ -395,18 +395,18 @@ public class SCMAnywhere extends SCM implements Serializable {
 		        proxyport = address.getPort();
 		    }
 		}
-		
+
 		/*Get the latest project files to the workspace*/
 		ArgumentListBuilder arg = new ArgumentListBuilder();
 		arg = getLatestProject(workspace, proxyhostname , proxyport);
 		ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-		 
+
 		if (launcher.launch().cmds(arg).stdout(byteArray).join() != 0)
 			listener.error("\nError in argument builder in Checkout\n");
 		else
-			listener.getLogger().print("Succesful Checkout\n");	
+			listener.getLogger().print("Succesful Checkout\n");
 		listener.getLogger().print( "latest project files "+ byteArray + "\n");
-	
+
 		ArgumentListBuilder changeSetArgument = new ArgumentListBuilder();
 		try {
 			changeSetArgument = getChangeSet("fileDetail", proxyhostname , proxyport);
@@ -414,8 +414,8 @@ public class SCMAnywhere extends SCM implements Serializable {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}		
-		ByteArrayOutputStream changeSetbyteArray = new ByteArrayOutputStream();	
+		}
+		ByteArrayOutputStream changeSetbyteArray = new ByteArrayOutputStream();
 		try {
 			if (launcher.launch().cmds(changeSetArgument).stdout(changeSetbyteArray).join() != 0)
 				listener.error("\nError in argument builder in getting changelog\n");
@@ -425,12 +425,12 @@ public class SCMAnywhere extends SCM implements Serializable {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}		
+		}
 		//listener.getLogger().print("Get the project logging  " + changeSetbyteArray + "\n");
 
 		String loggingData = changeSetbyteArray.toString();
 		String[] splitLines = loggingData.split("\n");
-			
+
 		int highestChangeSetID = 0;
 		String dateTime ="";
 		if(splitLines.length !=0)
@@ -438,29 +438,29 @@ public class SCMAnywhere extends SCM implements Serializable {
 			highestChangeSetID = getChangeSetID(splitLines);
 			dateTime = getRevisionDateTime(splitLines);
 		}
-				
+
 		/* Get the project file detail logging from the workspace */
 		ArgumentListBuilder fileDetailArgument = new ArgumentListBuilder();
-		fileDetailArgument = getChangeSet("NofileDetail", proxyhostname , proxyport);		
+		fileDetailArgument = getChangeSet("NofileDetail", proxyhostname , proxyport);
 		ByteArrayOutputStream DetailbyteArray = new ByteArrayOutputStream();
-		
+
 		if (launcher.launch().cmds(fileDetailArgument).stdout(DetailbyteArray).pwd(workspace).join() != 0)
 			listener.error("\nError in argument builder in getting changelog\n");
 		else
 			listener.getLogger().print("Succesful got the Detail file log\n");
 		//listener.getLogger().print("project file detail " +DetailbyteArray + "\n");
-		
+
 		final Run<?, ?> previousBuild = build.getPreviousBuild();
-		final SCMAnyWhereRevisionState previousState = getLastState(previousBuild);		
+		final SCMAnyWhereRevisionState previousState = getLastState(previousBuild);
 		final SCMAnyWhereRevisionState currentState =new SCMAnyWhereRevisionState(String.valueOf(highestChangeSetID) , dateTime);
 		build.addAction(currentState);
-		
-		if (changelogFile != null) 
+
+		if (changelogFile != null)
 		{
 			//listener.getLogger().printf(" ChangelogFile "+ changelogFile + "\n");
-			SCMChangeLogParser.saveChangeLog(previousState, changelogFile, repoDir , changeSetbyteArray, DetailbyteArray,listener); 
+			SCMChangeLogParser.saveChangeLog(previousState, changelogFile, repoDir , changeSetbyteArray, DetailbyteArray,listener);
 		}
-			
+
 	}
 
 	@Override

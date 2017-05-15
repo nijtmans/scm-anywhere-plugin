@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.scmanywhere;
 
 public class SCMChangeFileList {
-	
+
 	public SCMChangeFileList(String filename, String action, String dateTime, String author) {
 		super();
 		this.filename = filename;
@@ -38,7 +38,7 @@ public class SCMChangeFileList {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
-	
+
 	@Override
 	public String toString(){
 		return filename + ":" + author + ":" + action + ":" + dateTime ;

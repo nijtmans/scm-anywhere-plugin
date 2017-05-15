@@ -22,8 +22,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 /**
  * Class to allow any build step to be performed before the SCM checkout occurs.
  *
- * @author Chris Johnson
- *
  */
 @SuppressWarnings("deprecation")
 public class PreSCMBuildStepsWrapper extends BuildWrapper {
@@ -73,13 +71,13 @@ public class PreSCMBuildStepsWrapper extends BuildWrapper {
     @Override
     public void preCheckout(AbstractBuild build, Launcher launcher,BuildListener listener) throws IOException, InterruptedException {
         PrintStream log = listener.getLogger();
-        
+
         /* touch workspace so that it is created on first time */
         if( ! build.getWorkspace().exists())
         {
             build.getWorkspace().mkdirs();
         }
-        
+
         if (buildSteps == null) {
             log.println("No build steps declared");
             return;

@@ -33,7 +33,7 @@ public class SCMAnyWhereRevisionState extends SCMRevisionState implements Serial
 		boolean result = false;
 		if (other instanceof SCMRevisionState) {
 			SCMAnyWhereRevisionState state = (SCMAnyWhereRevisionState) other;
-			result = this.revNo.equals(state.revNo) && this.revDataTime.equals(state.revDataTime);		 
+			result = this.revNo.equals(state.revNo) && this.revDataTime.equals(state.revDataTime);
 		}
 		return result;
 	}

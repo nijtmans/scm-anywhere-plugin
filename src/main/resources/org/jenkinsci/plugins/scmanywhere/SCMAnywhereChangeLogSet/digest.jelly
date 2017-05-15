@@ -1,5 +1,5 @@
 <!--
-  Displays the SCM Anywhere change log digest for the build top page 
+  Displays the SCM Anywhere change log digest for the build top page
   when a build history link (or number) is followed
   e.g http://<hudson server>/job/<project>/<build number>/
 -->

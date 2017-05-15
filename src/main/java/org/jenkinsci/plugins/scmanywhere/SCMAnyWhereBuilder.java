@@ -31,7 +31,7 @@ public class SCMAnyWhereBuilder extends Builder {
     private final String cmdLineArgs;
     private final boolean failBuild;
 
- 
+
     public SCMAnyWhereBuilder(String exeName, String cmdLineArgs, boolean failBuild) {
         this.exeName     = exeName;
         this.cmdLineArgs = cmdLineArgs;

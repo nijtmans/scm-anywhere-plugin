@@ -21,7 +21,7 @@ public class SCMChangeLogEntry extends ChangeLogSet.Entry {
 	private final String comments;
 	private String action;
 	private List<ModifiedFile> modifiedFiles;
-	
+
 	/**
 	 * Creates a new SCM any here ChangeLogEntry object containing all the details about.
 	 *
@@ -30,7 +30,7 @@ public class SCMChangeLogEntry extends ChangeLogSet.Entry {
 	 * @param user
 	 *            The user of the action
 	 * @param dateTime
-	 *            The file action date time stamp 
+	 *            The file action date time stamp
 	 * @param action
 	 *            The type of action
 	 * @param modifiedFiles
@@ -50,10 +50,10 @@ public class SCMChangeLogEntry extends ChangeLogSet.Entry {
 	@Override
 	public String toString() {
 		return " changeSet ID : " + changeSetId + "\n"+
-				"user: " + user + "\n" + 
-				"dateTime: " + dateTime + "\n" + 
-				"action: " + action + "\n" + 
-				"comments: " + comments + "\n" + 
+				"user: " + user + "\n" +
+				"dateTime: " + dateTime + "\n" +
+				"action: " + action + "\n" +
+				"comments: " + comments + "\n" +
 				"modifiedFiles: " + modifiedFiles;
 	}
 
@@ -79,7 +79,7 @@ public class SCMChangeLogEntry extends ChangeLogSet.Entry {
 	public String getAction() {
 		return action;
 	}
-	
+
 	/**
 	 * Returns comments on the file
 	 */
@@ -139,7 +139,7 @@ public class SCMChangeLogEntry extends ChangeLogSet.Entry {
 			}
 		};
 	}
-	
+
 	public String getChangeSetId() {
 		return changeSetId;
 	}
@@ -148,16 +148,16 @@ public class SCMChangeLogEntry extends ChangeLogSet.Entry {
 
 		/**
 		 * The SCM any where standard of showing the each file action
-		 */	
+		 */
 		public static final EditType EDITED = new EditType("EDITED","The file was edited");
 		public static final EditType CREATED = new EditType("CREATED","The file was created");
 		public static final EditType ADDED = new EditType("ADDED","The file was added");
 		public static final EditType DELETED = new EditType("DELETED , PURGED","The file was deleted and purged");
-		public static final EditType PARENT_DELETED = new EditType("PARENT DELETED ","The parent file was deleted");		
-		public static final EditType PARENT_DELETED_PURGED = new EditType("PARENT DELETED , PURGED","The parent file was deleted and purged");		
+		public static final EditType PARENT_DELETED = new EditType("PARENT DELETED ","The parent file was deleted");
+		public static final EditType PARENT_DELETED_PURGED = new EditType("PARENT DELETED , PURGED","The parent file was deleted and purged");
 		private final String path;
 		private final char action;
-		
+
 
 		/**
 		 * Create a new ModifiedFile object with the given path and action.

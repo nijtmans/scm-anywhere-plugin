@@ -29,7 +29,7 @@ class SCMChangeLogParser extends ChangeLogParser {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public SCMChangeSet parse(final AbstractBuild build, final File changelogFile) throws IOException, SAXException {
-	
+
 		Digester digester = new Digester2();
 		ArrayList<SCMChangeLogEntry> logEntry = new ArrayList<SCMChangeLogEntry>();
 		digester.push(logEntry);
@@ -179,7 +179,7 @@ class SCMChangeLogParser extends ChangeLogParser {
 	/**
 	 * Generate a change log file containing the differences between one build
 	 * and the next and save the result as XML in a specified file.
-	 * 
+	 *
 	 * @param previousState
 	 *            The previous state of the repository
 	 * @param changelogFile
