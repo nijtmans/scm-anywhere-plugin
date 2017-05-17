@@ -170,42 +170,42 @@ public class SCMAnywhere extends SCM implements Serializable {
 
     }
 
-    private ArgumentListBuilder getChangeSet(String detail, String proxyhostname, int proxyport)
+    private ArgumentListBuilder getChangeSet(String proxyhostname, int proxyport, boolean detail)
             throws IOException, InterruptedException {
         ArgumentListBuilder arg = new ArgumentListBuilder();
         arg.add(getDescriptor().getScmExe());
         arg.add("GetFolderHistory");
 
-        if (this.server != "" || this.server != null) {
+        if (this.server != null && !"".equals(this.server)) {
             arg.add("-server");
             arg.add(getServer());
         }
-        if (this.port != "" || this.port != null) {
+        if (this.port != null && !"".equals(this.port)) {
             arg.add("-port");
             arg.add(getPort());
         }
 
-        if (this.username != "") {
+        if (this.username != null && !"".equals(this.username)) {
             arg.add("-username");
             arg.add(getUsername());
         }
 
-        if (this.password != "") {
+        if (this.password != null && !"".equals(this.password)) {
             arg.add("-pwd");
             arg.add(getPassword());
         }
 
-        if (this.teamproject != "") {
+        if (this.teamproject != null && !"".equals(this.teamproject)) {
             arg.add("-teamproject");
             arg.add(getTeamproject());
         }
 
-        if (this.folder != "") {
+        if (this.folder != null  && !"".equals(this.folder)) {
             arg.add("-folder");
             arg.add(getFolder());
         }
 
-        if (!proxyhostname.equals("") && proxyport != 0) {
+        if (proxyport != 0) {
             arg.add("-ptype");
             arg.add("\"http\"");
             arg.add("-pserver");
@@ -214,7 +214,7 @@ public class SCMAnywhere extends SCM implements Serializable {
             arg.add(proxyport);
         }
 
-        if (detail == "fileDetail") {
+        if (detail) {
             arg.add("-v");
         }
         return arg;
@@ -228,39 +228,37 @@ public class SCMAnywhere extends SCM implements Serializable {
         arg.add(getDescriptor().getScmExe());
         arg.add("GetLatestFolder");
 
-        if (this.server != "" || this.server != null) {
+        if (this.server != null && !"".equals(this.server)) {
             arg.add("-server");
             arg.add(getServer());
         }
-        if (this.port != "" || this.port != null) {
+        if (this.port != "" && !"".equals(this.port)) {
             arg.add("-port");
             arg.add(getPort());
         }
 
-        if (this.username != "" || this.username != null) {
+        if (this.username != null && !"".equals(this.username)) {
             arg.add("-username");
             arg.add(getUsername());
         }
 
-        if (this.password != "" || this.password != null) {
+        if (this.password != null && !"".equals(this.password)) {
             arg.add("-pwd");
             arg.add(getPassword());
         }
 
-        if (this.teamproject != "" || this.teamproject != null) {
+        if (this.teamproject != null && !"".equals(this.teamproject)) {
             arg.add("-teamproject");
             arg.add(getTeamproject());
         }
 
-        if (this.folder != "" || this.folder != null) {
+        if (this.folder != null && !"".equals(this.folder)) {
             arg.add("-folder");
             arg.add(getFolder());
         }
 
-        String workDir = "";
         arg.add("-workdir");
-        workDir = workspace.toString().replace("\\", "/");
-        arg.add(workDir);
+        arg.add(workspace.toString().replace("\\", "/"));
 
         if (!proxyhostname.equals("") && proxyport != 0) {
             arg.add("-ptype");
@@ -270,8 +268,7 @@ public class SCMAnywhere extends SCM implements Serializable {
             arg.add("-pport");
             arg.add(proxyport);
         }
-        arg.add("-folder");
-        arg.add("$/scm-anywhere");
+        arg.add("-replace");
         arg.add("-r");
         return arg;
     }
@@ -295,16 +292,17 @@ public class SCMAnywhere extends SCM implements Serializable {
 
         /* Get the proxy details setting from the Jenkins manage configuration */
         ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
-        String proxyhostname = "";
+        String proxyhostname = null;
         int proxyport = 0;
         if (proxyConfig != null) {
-            @SuppressWarnings("deprecation")
-            Proxy proxy = proxyConfig.createProxy();
+            Proxy proxy = proxyConfig.createProxy(server);
             if (proxy != null && proxy.type() == Proxy.Type.HTTP) {
                 InetSocketAddress address = (InetSocketAddress) proxy.address();
                 // Success, now we can get the proxy hostname and port.
                 proxyhostname = address.getHostName();
-                proxyport = address.getPort();
+                if (proxyhostname != null && !"".equals(proxyhostname)) {
+                    proxyport = address.getPort();
+                }
             }
         }
 
@@ -317,7 +315,7 @@ public class SCMAnywhere extends SCM implements Serializable {
         }
 
         output.printf("\nGetting current remote revision...  Test with Jenkins\n");
-        ArgumentListBuilder arg = getChangeSet("fileDetail", proxyhostname, proxyport);
+        ArgumentListBuilder arg = getChangeSet(proxyhostname, proxyport, true);
 
         int highestChangeSetID = 0;
         String DateTime = "";
@@ -401,7 +399,7 @@ public class SCMAnywhere extends SCM implements Serializable {
         }
 
         /* Get the proxy details setting from the Jenkins manage configuration */
-        String proxyhostname = "";
+        String proxyhostname = null;
         int proxyport = 0;
         ProxyConfiguration proxyConfig = Jenkins.getInstance().proxy;
         if (proxyConfig != null) {
@@ -410,7 +408,9 @@ public class SCMAnywhere extends SCM implements Serializable {
                 InetSocketAddress address = (InetSocketAddress) proxy.address();
                 // Success, now we can get the proxy hostname and port.
                 proxyhostname = address.getHostName();
-                proxyport = address.getPort();
+                if (proxyhostname != null && !"".equals(proxyhostname)) {
+                    proxyport = address.getPort();
+                }
             }
         }
 
@@ -427,7 +427,7 @@ public class SCMAnywhere extends SCM implements Serializable {
 
         ArgumentListBuilder changeSetArgument = new ArgumentListBuilder();
         try {
-            changeSetArgument = getChangeSet("fileDetail", proxyhostname, proxyport);
+            changeSetArgument = getChangeSet(proxyhostname, proxyport, true);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -457,15 +457,14 @@ public class SCMAnywhere extends SCM implements Serializable {
         }
 
         /* Get the project file detail logging from the workspace */
-        ArgumentListBuilder fileDetailArgument = new ArgumentListBuilder();
-        fileDetailArgument = getChangeSet("NofileDetail", proxyhostname, proxyport);
+        ArgumentListBuilder fileDetailArgument = getChangeSet(proxyhostname, proxyport, false);
         ByteArrayOutputStream DetailbyteArray = new ByteArrayOutputStream();
 
         if (launcher.launch().cmds(fileDetailArgument).stdout(DetailbyteArray).pwd(workspace).join() != 0)
             listener.error("\nError in argument builder in getting changelog\n");
         else
             listener.getLogger().print("Succesful got the Detail file log\n");
-        // listener.getLogger().print("project file detail " +DetailbyteArray + "\n");
+        // listener.getLogger().print("project file detail " + DetailbyteArray + "\n");
 
         final Run<?, ?> previousBuild = build.getPreviousBuild();
         final SCMAnyWhereRevisionState previousState = getLastState(previousBuild);
