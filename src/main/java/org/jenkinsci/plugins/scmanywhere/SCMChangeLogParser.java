@@ -45,15 +45,17 @@ class SCMChangeLogParser extends ChangeLogParser {
         digester.addBeanPropertySetter("*/changeset/parents Delete");
         digester.addSetNext("*/changeset", "add");
 
+        FileReader reader = null;
         try {
             // Do the actual parsing
-            FileReader reader = new FileReader(changelogFile);
+            reader = new FileReader(changelogFile);
             digester.parse(reader);
-            reader.close();
         } catch (IOException e) {
             throw new IOException("Failed to parse " + changelogFile, e);
         } catch (SAXException e) {
             throw new IOException("Failed to parse " + changelogFile + ": '" + Util.loadFile(changelogFile) + "'", e);
+        } finally {
+            if (reader != null) reader.close();
         }
 
         return new SCMChangeSet(build, logEntry);
@@ -196,10 +198,6 @@ class SCMChangeLogParser extends ChangeLogParser {
         List<SCMChangeLogEntry> logs = generateChangeLog(changelogFile, workspace, previousState, byteArray,
                 DetailbyteArray, listener);
 
-        if (logs == null) {
-            listener.getLogger().println("No logs found");
-            return;
-        }
         final XStream2 xs = new XStream2();
         final AtomicFileWriter w = new AtomicFileWriter(changelogFile);
         try {
@@ -210,15 +208,15 @@ class SCMChangeLogParser extends ChangeLogParser {
                 w.write(String.format(String.format("\n\t\t<Date>%s</Date>", log.getDateTime())));
                 w.write(String.format(String.format("\n\t\t<User>%s</User>", log.getUser())));
                 w.write(String.format(String.format("\n\t\t<Comment>%s</Comment>", log.getComments())));
-                w.write("\n\t\t\t<Modified Files>");
+                w.write("\n\t\t\t<ModifiedFiles>");
                 for (SCMChangeLogEntry.ModifiedFile modifiedFile : log.getAffectedFiles()) {
                     w.write(String.format("\n\t\t\t\t<File action=\"%s\">%s</File>", modifiedFile.getAction(),
                             modifiedFile.getPath()));
                 }
-                w.write("\n\t\t\t</Modified Files>");
-                w.write("\n\t</changeset>");
+                w.write("\n\t\t\t</ModifiedFiles>");
+                w.write("\n\t</Changeset>");
             }
-            w.write("</changelog>");
+            w.write("</Changelog>");
 
             xs.toXML(w);
             w.commit();
