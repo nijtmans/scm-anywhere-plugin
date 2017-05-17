@@ -72,14 +72,14 @@ public class PreSCMBuildStepsWrapper extends BuildWrapper {
             throws IOException, InterruptedException {
         PrintStream log = listener.getLogger();
 
+        if (build == null || buildSteps == null) {
+            log.println("No build steps declared");
+            return;
+        }
+
         /* touch workspace so that it is created on first time */
         if (!build.getWorkspace().exists()) {
             build.getWorkspace().mkdirs();
-        }
-
-        if (buildSteps == null) {
-            log.println("No build steps declared");
-            return;
         }
 
         log.println("Running Prebuild steps");

@@ -70,9 +70,9 @@ class SCMChangeLogParser extends ChangeLogParser {
 
         final List<SCMChangeLogEntry> logs = new ArrayList<SCMChangeLogEntry>();
         int avoidContinue = 0;
-        listener.getLogger().printf(" Inside the generate ChangeLog\n");
+        listener.getLogger().print(" Inside the generate ChangeLog\n");
 
-        String loggingData = byteArray.toString();
+        String loggingData = byteArray.toString("8859-1");
         String[] splitLines = loggingData.split("\n");
         if (splitLines.length != 0) {
 
@@ -194,7 +194,7 @@ class SCMChangeLogParser extends ChangeLogParser {
             final FilePath workspace, ByteArrayOutputStream byteArray, ByteArrayOutputStream DetailbyteArray,
             TaskListener listener) throws IOException, InterruptedException {
 
-        listener.getLogger().printf(" Inside the save change log\n");
+        listener.getLogger().print(" Inside the save change log\n");
         List<SCMChangeLogEntry> logs = generateChangeLog(changelogFile, workspace, previousState, byteArray,
                 DetailbyteArray, listener);
 
@@ -204,14 +204,13 @@ class SCMChangeLogParser extends ChangeLogParser {
             w.write("<?xml version='1.0' encoding='UTF-8'?>\n");
             w.write("<Changelog>");
             for (SCMChangeLogEntry log : logs) {
-                w.write(String.format("\n\t<Changeset version=\"%s\">", log.getChangeSetId()));
-                w.write(String.format(String.format("\n\t\t<Date>%s</Date>", log.getDateTime())));
-                w.write(String.format(String.format("\n\t\t<User>%s</User>", log.getUser())));
-                w.write(String.format(String.format("\n\t\t<Comment>%s</Comment>", log.getComments())));
+                w.write("\n\t<Changeset version=\"" + log.getChangeSetId() + "\">");
+                w.write("\n\t\t<Date>" + log.getDateTime() + "</Date>");
+                w.write("\n\t\t<User>" + log.getUser() + "</User>");
+                w.write("\n\t\t<Comment>" + log.getComments() + "</Comment>");
                 w.write("\n\t\t\t<ModifiedFiles>");
                 for (SCMChangeLogEntry.ModifiedFile modifiedFile : log.getAffectedFiles()) {
-                    w.write(String.format("\n\t\t\t\t<File action=\"%s\">%s</File>", modifiedFile.getAction(),
-                            modifiedFile.getPath()));
+                    w.write("\n\t\t\t\t<File action=\"" + modifiedFile.getAction() + "\">" + modifiedFile.getPath() + "</File>");
                 }
                 w.write("\n\t\t\t</ModifiedFiles>");
                 w.write("\n\t</Changeset>");
