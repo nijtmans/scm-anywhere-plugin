@@ -50,7 +50,7 @@ class SCMChangeLogParser extends ChangeLogParser {
         FileInputStream stream = null;
         InputStreamReader reader = null;
         stream = new FileInputStream(changelogFile);
-        reader = new InputStreamReader(stream);
+        reader = new InputStreamReader(stream, "8859-1");
         digester.parse(reader);
         reader.close();
         stream.close();
