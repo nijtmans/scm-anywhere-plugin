@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.scmanywhere;
 
 import hudson.AbortException;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.BuildListener;
 import hudson.model.AbstractBuild;
@@ -71,6 +72,7 @@ public class PreSCMBuildStepsWrapper extends BuildWrapper {
     public void preCheckout(AbstractBuild build, Launcher launcher, BuildListener listener)
             throws IOException, InterruptedException {
         PrintStream log = listener.getLogger();
+        FilePath workspace;
 
         if (build == null || buildSteps == null) {
             log.println("No build steps declared");
@@ -78,8 +80,9 @@ public class PreSCMBuildStepsWrapper extends BuildWrapper {
         }
 
         /* touch workspace so that it is created on first time */
-        if (!build.getWorkspace().exists()) {
-            build.getWorkspace().mkdirs();
+        workspace = build.getWorkspace();
+        if (workspace != null && !workspace.exists()) {
+        	workspace.mkdirs();
         }
 
         log.println("Running Prebuild steps");

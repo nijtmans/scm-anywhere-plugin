@@ -2,8 +2,10 @@ package org.jenkinsci.plugins.scmanywhere;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.digester.Digester;
@@ -45,18 +47,13 @@ class SCMChangeLogParser extends ChangeLogParser {
         digester.addBeanPropertySetter("*/changeset/parents Delete");
         digester.addSetNext("*/changeset", "add");
 
-        FileReader reader = null;
-        try {
-            // Do the actual parsing
-            reader = new FileReader(changelogFile);
-            digester.parse(reader);
-        } catch (IOException e) {
-            throw new IOException("Failed to parse " + changelogFile, e);
-        } catch (SAXException e) {
-            throw new IOException("Failed to parse " + changelogFile + ": '" + Util.loadFile(changelogFile) + "'", e);
-        } finally {
-            if (reader != null) reader.close();
-        }
+        FileInputStream stream = null;
+        InputStreamReader reader = null;
+        stream = new FileInputStream(changelogFile);
+        reader = new InputStreamReader(stream);
+        digester.parse(reader);
+        reader.close();
+        stream.close();
 
         return new SCMChangeSet(build, logEntry);
     }
@@ -100,7 +97,7 @@ class SCMChangeLogParser extends ChangeLogParser {
                         }
 
                         /* Get modified file list */
-                        String loggingFile = DetailbyteArray.toString();
+                        String loggingFile = DetailbyteArray.toString("8859-1");
                         String[] splitLoggingLines = loggingFile.split("\n");
                         if (splitLoggingLines.length != 0) {
                             for (String lineDetail : splitLoggingLines) {

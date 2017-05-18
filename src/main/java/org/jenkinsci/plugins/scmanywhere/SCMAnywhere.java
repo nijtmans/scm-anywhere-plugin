@@ -294,11 +294,11 @@ public class SCMAnywhere extends SCM implements Serializable {
             // Probably the first build, or possibly an aborted build
             myBaseline = getLastState(lastRun);
             if (myBaseline == null)
-                output.printf("\nNo Baseline \n");
+                output.println("No Baseline");
             return PollingResult.BUILD_NOW;
         }
 
-        output.printf("\nGetting current remote revision...  Test with Jenkins\n");
+        output.println("Getting current remote revision...  Test with Jenkins");
         ArgumentListBuilder arg = getChangeSet(proxy, true);
 
         int highestChangeSetID = 0;
