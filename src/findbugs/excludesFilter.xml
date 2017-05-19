@@ -1,0 +1,11 @@
+<FindBugsFilter>
+  <!-- Jenkins.getInstance() always returns a non-null. -->
+  <Match>
+    <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    <Class name="org.jenkinsci.plugins.scmanywhere.SCMAnywhere"/>
+    <Or>
+      <Method name="checkout"/>
+      <Method name="compareRemoteRevisionWith"/>
+    </Or>
+  </Match>
+</FindBugsFilter>

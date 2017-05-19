@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -270,9 +269,6 @@ public class SCMAnywhere extends SCM implements Serializable {
 
         PrintStream output = listener.getLogger();
         final Jenkins jenkins = Jenkins.getInstance();
-        if (jenkins == null) {
-            throw new IOException("Jenkins instance is not ready\n");
-        }
 
         launcher = jenkins.createLauncher(listener);
         SCMAnyWhereRevisionState myBaseline = (SCMAnyWhereRevisionState) baseline;
@@ -365,16 +361,12 @@ public class SCMAnywhere extends SCM implements Serializable {
         return dateTime;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void checkout(Run<?, ?> build, Launcher launcher, FilePath workspace, TaskListener listener,
             File changelogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
         listener.getLogger().println("Checkout method Starting ..");
 
         final Jenkins jenkins = Jenkins.getInstance();
-        if (jenkins == null) {
-            throw new IOException("Jenkins instance is not ready\n");
-        }
 
         if (launcher == null) {
             launcher = new LocalLauncher(listener);
